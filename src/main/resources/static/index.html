@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestor de Turnos de Odontología - Anaclara Cuzziol</title>
+<style>
+  :root {
+    --morado-oscuro: #2e1065;
+    --morado-principal: #6b21a8;
+    --morado-medio: #7c3aed;
+    --morado-claro: #8b5cf6;
+    --lavanda-fondo: #f5f3ff;
+    --lavanda-suave: #ede9fe;
+    --borde: #ddd6fe;
+    --texto-oscuro: #1e1b4b;
+    --texto-gris: #5b5577;
+    --blanco: #ffffff;
+    --sombra: 0 10px 25px -5px rgba(107, 33, 168, 0.15), 0 8px 10px -6px rgba(107, 33, 168, 0.1);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--lavanda-fondo);
+    color: var(--texto-oscuro);
+    min-height: 100vh;
+  }
+
+  /* ========== PORTADA DE BIENVENIDA ========== */
+  #portada {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 20% 20%, #4c1d95 0%, #2e1065 50%, #17082e 100%);
+    color: var(--blanco);
+    padding: 24px;
+    text-align: center;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    overflow: hidden;
+  }
+
+  #portada.oculta {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .forma-bg {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .forma-1 { width: 350px; height: 350px; background: #a855f7; top: -50px; left: -50px; }
+  .forma-2 { width: 450px; height: 450px; background: #7c3aed; bottom: -80px; right: -80px; }
+
+  .tarjeta-portada {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 48px 36px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: flotar 0.6s ease-out;
+  }
+
+  @keyframes flotar {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .icono-dental {
+    font-size: 54px;
+    margin-bottom: 12px;
+    display: inline-block;
+    filter: drop-shadow(0 4px 12px rgba(168, 85, 247, 0.5));
+  }
+
+  .tarjeta-portada h1 {
+    margin: 0 0 10px;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #ffffff 40%, #e9d5ff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tarjeta-portada h2 {
+    margin: 0 0 32px;
+    font-size: 19px;
+    font-weight: 400;
+    color: #d8b4fe;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-iniciar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 38px;
+    font-size: 17px;
+    font-weight: 600;
+    border: 0;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #9333ea, #7c3aed);
+    color: var(--blanco);
+    cursor: pointer;
+    box-shadow: 0 0 24px rgba(147, 51, 234, 0.55);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-iniciar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 32px rgba(168, 85, 247, 0.75);
+  }
+
+  /* ========== PANEL PRINCIPAL ========== */
+  #panel-gestion {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #panel-gestion.activo {
+    opacity: 1;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--morado-oscuro) 0%, var(--morado-principal) 100%);
+    color: var(--blanco);
+    padding: 18px 28px;
+    box-shadow: 0 4px 15px rgba(46, 16, 101, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  header h1 { margin: 0; font-size: 20px; font-weight: 600; }
+  header p { margin: 4px 0 0; font-size: 13px; color: #d8b4fe; }
+
+  .btn-volver-portada {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-volver-portada:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+    display: grid;
+    gap: 24px;
+  }
+
+  .barra-modulos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .btn-modulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    background: var(--morado-principal);
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(107, 33, 168, 0.2);
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-modulo:hover {
+    background: var(--morado-medio);
+    transform: translateY(-1px);
+  }
+
+  section {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: var(--sombra);
+  }
+
+  .cabecera-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--lavanda-suave);
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .cabecera-seccion h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--morado-oscuro);
+  }
+
+  .btn-volver-seccion {
+    background: var(--lavanda-suave);
+    color: var(--morado-oscuro);
+    border: 1px solid var(--borde);
+    font-weight: 600;
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-volver-seccion:hover {
+    background: var(--borde);
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    align-items: end;
+  }
+
+  label {
+    display: grid;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--texto-gris);
+  }
+
+  input, select, textarea, button { font: inherit; }
+
+  input, select, textarea {
+    padding: 9px 12px;
+    border: 1.5px solid var(--borde);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--texto-oscuro);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--morado-medio);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  }
+
+  button {
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--morado-principal);
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  button:hover { background: var(--morado-medio); }
+  button:active { transform: scale(0.98); }
+
+  button.sec {
+    background: var(--lavanda-suave);
+    color: var(--morado-oscuro);
+    font-weight: 500;
+  }
+  button.sec:hover { background: var(--borde); }
+
+  button.peligro {
+    background: #e11d48;
+    color: #fff;
+  }
+  button.peligro:hover { background: #be123c; }
+
+  button.mini {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .barra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 14px;
+  }
+
+  .tabla { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--borde);
+    vertical-align: middle;
+  }
+
+  th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--morado-principal);
+    background: #faf5ff;
+    font-weight: 600;
+  }
+
+  tbody tr:hover { background: #faf5ff; }
+
+  .acciones { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .estado {
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .PROGRAMADO { background: #ede9fe; color: #5b21b6; }
+  .CANCELADO  { background: #ffe4e6; color: #9f1239; }
+  .REALIZADO  { background: #dcfce7; color: #166534; }
+  .AUSENTE    { background: #fef3c7; color: #92400e; }
+
+  #mensaje {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    text-align: center;
+  }
+  #mensaje.ok { display: block; background: #dcfce7; color: #166534; border-bottom: 1px solid #bbf7d0; }
+  #mensaje.error { display: block; background: #ffe4e6; color: #9f1239; border-bottom: 1px solid #fecdd3; }
+
+  dialog {
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 24px;
+    min-width: 320px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  }
+  dialog::backdrop {
+    background: rgba(46, 16, 101, 0.4);
+    backdrop-filter: blur(2px);
+  }
+  dialog form { grid-template-columns: 1fr; }
+  .vacio { color: var(--texto-gris); padding: 16px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- 1. PORTADA DE BIENVENIDA -->
+<div id="portada">
+  <div class="forma-bg forma-1"></div>
+  <div class="forma-bg forma-2"></div>
+
+  <div class="tarjeta-portada">
+    <div class="icono-dental">🦷</div>
+    <h1>Gestor de Turnos de Odontología</h1>
+    <h2>Odontóloga Anaclara Cuzziol</h2>
+    <button type="button" class="btn-iniciar" id="btnIniciarPortada">
+      <span>Iniciar</span>
+      <span aria-hidden="true">➔</span>
+    </button>
+  </div>
+</div>
+
+<!-- 2. PANEL DE GESTIÓN -->
+<div id="panel-gestion" style="display: none;">
+  <header>
+    <div>
+      <h1>Gestor de Turnos - Odontología</h1>
+      <p>Od. Anaclara Cuzziol &bull; Panel de Gestión</p>
+    </div>
+    <button type="button" class="btn-volver-portada" id="btnVolverPortada">Inicio</button>
+  </header>
+
+  <div id="mensaje" role="status"></div>
+
+  <main>
+    <!-- Botones de Acceso a Módulos -->
+    <div class="barra-modulos">
+      <button type="button" class="btn-modulo" id="btnAbrirNuevoTurno">
+        <span>+</span> Nuevo Turno
+      </button>
+      <button type="button" class="btn-modulo" id="btnAbrirPacientes">
+        <span>👤</span> Gestión de Pacientes
+      </button>
+    </div>
+
+    <!-- Módulo 1: Agenda de Turnos (Vista Principal) -->
+    <section id="secAgenda">
+      <div class="cabecera-seccion">
+        <h2>Agenda de Turnos</h2>
+      </div>
+      <div class="barra">
+        <label>Día
+          <input type="date" id="filtroFecha">
+        </label>
+        <button type="button" class="sec" id="btnHoy">Hoy</button>
+        <button type="button" class="sec" id="btnTodos">Ver todos</button>
+      </div>
+      <div class="tabla">
+        <table>
+          <thead>
+            <tr><th>Fecha y hora</th><th>Paciente</th><th>Tratamiento</th><th>Importe</th><th>Cobrado</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaTurnos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Módulo 2: Nuevo Turno (Oculto por defecto) -->
+    <section id="secNuevoTurno" style="display: none;">
+      <div class="cabecera-seccion">
+        <h2>Nuevo Turno</h2>
+        <button type="button" class="btn-volver-seccion" data-volver="secNuevoTurno">← Volver a la Agenda</button>
+      </div>
+      <form id="formTurno">
+        <label>Paciente
+          <select id="turnoPaciente" required></select>
+        </label>
+        <label>Tratamiento
+          <select id="turnoTratamiento" required></select>
+        </label>
+        <label>Fecha y hora
+          <input type="datetime-local" id="turnoFecha" required>
+        </label>
+        <label>Duración (minutos)
+          <input type="number" id="turnoDuracion" value="30" min="5" step="5" required>
+        </label>
+        <label>Importe (vacío = el del tratamiento)
+          <input type="number" id="turnoImporte" min="0" step="0.01">
+        </label>
+        <label>Observaciones
+          <input type="text" id="turnoObs" maxlength="500">
+        </label>
+        <div><button type="submit">Agendar turno</button></div>
+      </form>
+    </section>
+
+    <!-- Módulo 3: Gestión de Pacientes (Oculto por defecto) -->
+    <section id="secPacientes" style="display: none;">
+      <div class="cabecera-seccion">
+        <h2>Gestión de Pacientes</h2>
+        <button type="button" class="btn-volver-seccion" data-volver="secPacientes">← Volver a la Agenda</button>
+      </div>
+      <form id="formPaciente">
+        <label>Nombre <input type="text" id="pNombre" required></label>
+        <label>Apellido <input type="text" id="pApellido" required></label>
+        <label>DNI <input type="text" id="pDni" required></label>
+        <label>Teléfono <input type="text" id="pTelefono"></label>
+        <label>Email <input type="email" id="pEmail"></label>
+        <label>Obra social <input type="text" id="pObraSocial"></label>
+        <div><button type="submit">Guardar paciente</button></div>
+      </form>
+      <div class="barra" style="margin-top:18px">
+        <label>Buscar por apellido, nombre o DNI
+          <input type="search" id="buscarPaciente" placeholder="Ej: Perez o 40123456">
+        </label>
+      </div>
+      <div class="tabla">
+        <table>
+          <thead>
+            <tr><th>Paciente</th><th>DNI</th><th>Teléfono</th><th>Email</th><th>Obra social</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaPacientes"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="dlgReprogramar">
+  <form id="formReprogramar" method="dialog">
+    <h2 style="margin: 0 0 14px; font-size: 18px; color: var(--morado-oscuro);">Reprogramar turno</h2>
+    <label>Nueva fecha y hora
+      <input type="datetime-local" id="repFecha" required>
+    </label>
+    <label>Duración (minutos)
+      <input type="number" id="repDuracion" min="5" step="5" required>
+    </label>
+    <div class="acciones" style="margin-top: 14px;">
+      <button type="submit">Guardar cambio</button>
+      <button type="button" class="sec" id="btnCerrarRep">Cerrar</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const dinero = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
+let turnosMostrados = [];
+let turnoAReprogramar = null;
+
+/* ---------- Control de Portada e Inicio ---------- */
+$("btnIniciarPortada").addEventListener("click", () => {
+  const portada = $("portada");
+  const panel = $("panel-gestion");
+  
+  portada.classList.add("oculta");
+  panel.style.display = "block";
+  setTimeout(() => {
+    panel.classList.add("activo");
+  }, 30);
+  mostrarModulo("secAgenda");
+});
+
+$("btnVolverPortada").addEventListener("click", () => {
+  const portada = $("portada");
+  const panel = $("panel-gestion");
+  
+  panel.classList.remove("activo");
+  panel.style.display = "none";
+  portada.classList.remove("oculta");
+});
+
+/* ---------- Navegación entre Módulos ---------- */
+function mostrarModulo(idModulo) {
+  $("secAgenda").style.display = "none";
+  $("secNuevoTurno").style.display = "none";
+  $("secPacientes").style.display = "none";
+
+  $(idModulo).style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+$("btnAbrirNuevoTurno").addEventListener("click", () => mostrarModulo("secNuevoTurno"));
+$("btnAbrirPacientes").addEventListener("click", () => mostrarModulo("secPacientes"));
+
+document.querySelectorAll(".btn-volver-seccion").forEach((btn) => {
+  btn.addEventListener("click", () => mostrarModulo("secAgenda"));
+});
+
+/* ---------- Utilidades Generales ---------- */
+function esc(texto) {
+  return String(texto ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function aviso(texto, tipo) {
+  const el = $("mensaje");
+  el.textContent = texto;
+  el.className = tipo;
+  clearTimeout(aviso.t);
+  aviso.t = setTimeout(() => { el.className = ""; }, 5000);
+}
+
+async function api(ruta, opciones = {}) {
+  const res = await fetch("/api" + ruta, { headers: { "Content-Type": "application/json" }, ...opciones });
+  const texto = await res.text();
+  let datos = null;
+  if (texto) { try { datos = JSON.parse(texto); } catch (e) { datos = null; } }
+  if (!res.ok) throw new Error((datos && datos.error) || "Error " + res.status);
+  return datos;
+}
+
+async function conAviso(accion, textoOk) {
+  try {
+    await accion();
+    if (textoOk) aviso(textoOk, "ok");
+  } catch (e) {
+    aviso(e.message, "error");
+  }
+}
+
+function formatoFecha(iso) {
+  return new Date(iso).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
+}
+
+function aIsoLocal(valorInput) {
+  return valorInput.length === 16 ? valorInput + ":00" : valorInput;
+}
+
+function hoyTexto() {
+  const d = new Date();
+  const mes = String(d.getMonth() + 1).padStart(2, "0");
+  const dia = String(d.getDate()).padStart(2, "0");
+  return d.getFullYear() + "-" + mes + "-" + dia;
+}
+
+/* ---------- Agenda de Turnos ---------- */
+async function cargarTurnos() {
+  const fecha = $("filtroFecha").value;
+  turnosMostrados = await api("/turnos" + (fecha ? "?fecha=" + fecha : ""));
+  const cuerpo = $("tablaTurnos");
+  if (turnosMostrados.length === 0) {
+    cuerpo.innerHTML = '<tr><td colspan="7" class="vacio">No hay turnos para mostrar.</td></tr>';
+    return;
+  }
+  cuerpo.innerHTML = turnosMostrados.map((t) => {
+    const programado = t.estado === "PROGRAMADO";
+    const botones = [];
+    if (programado) {
+      botones.push(`<button class="mini sec" data-accion="reprogramar" data-id="${t.id}">Reprogramar</button>`);
+      botones.push(`<button class="mini sec" data-accion="realizado" data-id="${t.id}">Realizado</button>`);
+      botones.push(`<button class="mini sec" data-accion="ausente" data-id="${t.id}">Ausente</button>`);
+      botones.push(`<button class="mini sec" data-accion="cancelar" data-id="${t.id}">Cancelar</button>`);
+    }
+    if (t.estado !== "CANCELADO" && !t.cobrado) {
+      botones.push(`<button class="mini" data-accion="cobrar" data-id="${t.id}">Cobrar</button>`);
+    }
+    // Botón de eliminar turno
+    botones.push(`<button class="mini peligro" data-accion="eliminarTurno" data-id="${t.id}">Eliminar</button>`);
+
+    return `<tr>
+      <td>${esc(formatoFecha(t.fechaHoraInicio))}</td>
+      <td><strong>${esc(t.paciente.apellido)}, ${esc(t.paciente.nombre)}</strong><br><small style="color:var(--texto-gris)">DNI ${esc(t.paciente.dni)}</small></td>
+      <td>${esc(t.tratamiento.nombre)}${t.observaciones ? "<br><small style='color:var(--texto-gris)'>" + esc(t.observaciones) + "</small>" : ""}</td>
+      <td>${t.importe != null ? dinero.format(t.importe) : "-"}</td>
+      <td>${t.cobrado ? "Sí" : "No"}</td>
+      <td><span class="estado ${esc(t.estado)}">${esc(t.estado.toLowerCase())}</span></td>
+      <td><div class="acciones">${botones.join("")}</div></td>
+    </tr>`;
+  }).join("");
+}
+
+$("tablaTurnos").addEventListener("click", (ev) => {
+  const boton = ev.target.closest("button[data-accion]");
+  if (!boton) return;
+  const id = boton.dataset.id;
+  const accion = boton.dataset.accion;
+
+  if (accion === "eliminarTurno") {
+    if (!confirm("¿Está seguro de eliminar este turno definitivamente?")) return;
+    conAviso(async () => {
+      await api("/turnos/" + id, { method: "DELETE" });
+      await cargarTurnos();
+    }, "Turno eliminado");
+    return;
+  }
+
+  if (accion === "reprogramar") {
+    turnoAReprogramar = turnosMostrados.find((t) => String(t.id) === id);
+    $("repFecha").value = turnoAReprogramar.fechaHoraInicio.slice(0, 16);
+    const minutos = (new Date(turnoAReprogramar.fechaHoraFin) - new Date(turnoAReprogramar.fechaHoraInicio)) / 60000;
+    $("repDuracion").value = minutos;
+    $("dlgReprogramar").showModal();
+    return;
+  }
+  if (accion === "cancelar" && !confirm("¿Cancelar este turno?")) return;
+
+  const textos = {
+    cancelar: "Turno cancelado",
+    realizado: "Turno marcado como realizado",
+    ausente: "Turno marcado como ausente",
+    cobrar: "Turno marcado como cobrado",
+  };
+  conAviso(async () => {
+    await api("/turnos/" + id + "/" + accion, { method: "PUT" });
+    await cargarTurnos();
+  }, textos[accion]);
+});
+
+$("formReprogramar").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  conAviso(async () => {
+    await api("/turnos/" + turnoAReprogramar.id + "/reprogramar", {
+      method: "PUT",
+      body: JSON.stringify({
+        fechaHoraInicio: aIsoLocal($("repFecha").value),
+        duracionMinutos: Number($("repDuracion").value),
+      }),
+    });
+    $("dlgReprogramar").close();
+    await cargarTurnos();
+  }, "Turno reprogramado");
+});
+$("btnCerrarRep").addEventListener("click", () => $("dlgReprogramar").close());
+
+$("filtroFecha").addEventListener("change", () => conAviso(cargarTurnos));
+$("btnHoy").addEventListener("click", () => { $("filtroFecha").value = hoyTexto(); conAviso(cargarTurnos); });
+$("btnTodos").addEventListener("click", () => { $("filtroFecha").value = ""; conAviso(cargarTurnos); });
+
+/* ---------- Gestión de Pacientes ---------- */
+async function cargarPacientes() {
+  const q = $("buscarPaciente").value.trim();
+  const pacientes = await api("/pacientes" + (q ? "?buscar=" + encodeURIComponent(q) : ""));
+  const cuerpo = $("tablaPacientes");
+  if (pacientes.length === 0) {
+    cuerpo.innerHTML = '<tr><td colspan="6" class="vacio">No hay pacientes para mostrar.</td></tr>';
+    return pacientes;
+  }
+  cuerpo.innerHTML = pacientes.map((p) => `<tr>
+    <td><strong>${esc(p.apellido)}, ${esc(p.nombre)}</strong></td>
+    <td>${esc(p.dni)}</td>
+    <td>${esc(p.telefono)}</td>
+    <td>${esc(p.email)}</td>
+    <td>${esc(p.obraSocial)}</td>
+    <td>
+      <button class="mini peligro" data-accion="eliminarPaciente" data-id="${p.id}">Eliminar</button>
+    </td>
+  </tr>`).join("");
+  return pacientes;
+}
+
+$("tablaPacientes").addEventListener("click", (ev) => {
+  const boton = ev.target.closest("button[data-accion='eliminarPaciente']");
+  if (!boton) return;
+  const id = boton.dataset.id;
+  if (!confirm("¿Está seguro de eliminar este paciente?")) return;
+
+  conAviso(async () => {
+    await api("/pacientes/" + id, { method: "DELETE" });
+    await Promise.all([cargarPacientes(), cargarSelectPacientes(), cargarTurnos()]);
+  }, "Paciente eliminado");
+});
+
+async function cargarSelectPacientes() {
+  const todos = await api("/pacientes");
+  $("turnoPaciente").innerHTML = todos.map((p) =>
+    `<option value="${p.id}">${esc(p.apellido)}, ${esc(p.nombre)} (DNI ${esc(p.dni)})</option>`).join("");
+}
+
+$("buscarPaciente").addEventListener("input", () => conAviso(cargarPacientes));
+
+$("formPaciente").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  conAviso(async () => {
+    await api("/pacientes", {
+      method: "POST",
+      body: JSON.stringify({
+        nombre: $("pNombre").value.trim(),
+        apellido: $("pApellido").value.trim(),
+        dni: $("pDni").value.trim(),
+        telefono: $("pTelefono").value.trim(),
+        email: $("pEmail").value.trim(),
+        obraSocial: $("pObraSocial").value.trim(),
+      }),
+    });
+    $("formPaciente").reset();
+    await Promise.all([cargarPacientes(), cargarSelectPacientes()]);
+    mostrarModulo("secAgenda");
+  }, "Paciente guardado con éxito");
+});
+
+/* ---------- Tratamientos y Nuevo Turno ---------- */
+async function cargarTratamientos() {
+  const lista = await api("/tratamientos");
+  $("turnoTratamiento").innerHTML = lista.map((t) =>
+    `<option value="${t.id}">${esc(t.nombre)} (${dinero.format(t.importeBase)})</option>`).join("");
+}
+
+$("formTurno").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  const importe = $("turnoImporte").value;
+  conAviso(async () => {
+    await api("/turnos", {
+      method: "POST",
+      body: JSON.stringify({
+        pacienteId: Number($("turnoPaciente").value),
+        tratamientoId: Number($("turnoTratamiento").value),
+        fechaHoraInicio: aIsoLocal($("turnoFecha").value),
+        duracionMinutos: Number($("turnoDuracion").value),
+        importe: importe === "" ? null : Number(importe),
+        observaciones: $("turnoObs").value.trim() || null,
+      }),
+    });
+    $("turnoImporte").value = "";
+    $("turnoObs").value = "";
+    await cargarTurnos();
+    mostrarModulo("secAgenda");
+  }, "Turno agendado con éxito");
+});
+
+/* ---------- Inicialización ---------- */
+conAviso(async () => {
+  await Promise.all([cargarTurnos(), cargarPacientes(), cargarSelectPacientes(), cargarTratamientos()]);
+});
+</script>
+</body>
+</html>
