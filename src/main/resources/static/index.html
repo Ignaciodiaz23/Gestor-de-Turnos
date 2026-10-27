@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gestor de Turnos de Odontología - Anaclara Cuzziol</title>
+<title>Gestor de Odontología - Od. Anaclara Cuzziol</title>
 <style>
   :root {
     --morado-oscuro: #2e1065;
@@ -16,7 +16,11 @@
     --texto-oscuro: #1e1b4b;
     --texto-gris: #5b5577;
     --blanco: #ffffff;
-    --sombra: 0 10px 25px -5px rgba(107, 33, 168, 0.15), 0 8px 10px -6px rgba(107, 33, 168, 0.1);
+    --exito: #166534;
+    --exito-bg: #dcfce7;
+    --peligro: #9f1239;
+    --peligro-bg: #ffe4e6;
+    --sombra: 0 10px 25px -5px rgba(107, 33, 168, 0.12), 0 8px 10px -6px rgba(107, 33, 168, 0.08);
   }
 
   * { box-sizing: border-box; }
@@ -44,20 +48,8 @@
     transition: opacity 0.4s ease, visibility 0.4s ease;
     overflow: hidden;
   }
-
-  #portada.oculta {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  .forma-bg {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
-    pointer-events: none;
-  }
+  #portada.oculta { opacity: 0; visibility: hidden; pointer-events: none; }
+  .forma-bg { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; pointer-events: none; }
   .forma-1 { width: 350px; height: 350px; background: #a855f7; top: -50px; left: -50px; }
   .forma-2 { width: 450px; height: 450px; background: #7c3aed; bottom: -80px; right: -80px; }
 
@@ -72,41 +64,19 @@
     padding: 48px 36px;
     border-radius: 24px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    animation: flotar 0.6s ease-out;
   }
-
-  @keyframes flotar {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .icono-dental {
-    font-size: 54px;
-    margin-bottom: 12px;
-    display: inline-block;
-    filter: drop-shadow(0 4px 12px rgba(168, 85, 247, 0.5));
-  }
-
+  .icono-dental { font-size: 54px; margin-bottom: 12px; display: inline-block; filter: drop-shadow(0 4px 12px rgba(168, 85, 247, 0.5)); }
   .tarjeta-portada h1 {
     margin: 0 0 10px;
     font-size: 34px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    line-height: 1.2;
     background: linear-gradient(135deg, #ffffff 40%, #e9d5ff 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
-  .tarjeta-portada h2 {
-    margin: 0 0 32px;
-    font-size: 19px;
-    font-weight: 400;
-    color: #d8b4fe;
-    letter-spacing: 0.02em;
-  }
-
+  .tarjeta-portada h2 { margin: 0 0 32px; font-size: 19px; font-weight: 400; color: #d8b4fe; }
   .btn-iniciar {
     display: inline-flex;
     align-items: center;
@@ -122,26 +92,16 @@
     box-shadow: 0 0 24px rgba(147, 51, 234, 0.55);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-
-  .btn-iniciar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 32px rgba(168, 85, 247, 0.75);
-  }
+  .btn-iniciar:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(168, 85, 247, 0.75); }
 
   /* ========== PANEL PRINCIPAL ========== */
-  #panel-gestion {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  #panel-gestion.activo {
-    opacity: 1;
-  }
+  #panel-gestion { opacity: 0; transition: opacity 0.3s ease; }
+  #panel-gestion.activo { opacity: 1; }
 
   header {
     background: linear-gradient(135deg, var(--morado-oscuro) 0%, var(--morado-principal) 100%);
     color: var(--blanco);
-    padding: 18px 28px;
+    padding: 16px 28px;
     box-shadow: 0 4px 15px rgba(46, 16, 101, 0.15);
     display: flex;
     justify-content: space-between;
@@ -149,7 +109,6 @@
     flex-wrap: wrap;
     gap: 12px;
   }
-
   header h1 { margin: 0; font-size: 20px; font-weight: 600; }
   header p { margin: 4px 0 0; font-size: 13px; color: #d8b4fe; }
 
@@ -160,30 +119,41 @@
     padding: 7px 16px;
     border-radius: 8px;
     font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .btn-volver-portada:hover {
-    background: rgba(255, 255, 255, 0.28);
-    transform: translateY(-1px);
   }
 
   main {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 24px 20px 48px;
     display: grid;
-    gap: 24px;
+    gap: 22px;
   }
+
+  /* Tarjetas de métricas del Dashboard */
+  .grid-metricas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .card-metrica {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: var(--sombra);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card-metrica .titulo { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--texto-gris); letter-spacing: 0.04em; }
+  .card-metrica .valor { font-size: 26px; font-weight: 700; color: var(--morado-oscuro); }
 
   .barra-modulos {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 6px;
   }
-
   .btn-modulo {
     display: inline-flex;
     align-items: center;
@@ -196,13 +166,9 @@
     color: #fff;
     border: 0;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(107, 33, 168, 0.2);
-    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(107, 33, 168, 0.15);
   }
-  .btn-modulo:hover {
-    background: var(--morado-medio);
-    transform: translateY(-1px);
-  }
+  .btn-modulo:hover { background: var(--morado-medio); }
 
   section {
     background: var(--blanco);
@@ -211,7 +177,6 @@
     padding: 22px 24px;
     box-shadow: var(--sombra);
   }
-
   .cabecera-seccion {
     display: flex;
     justify-content: space-between;
@@ -222,13 +187,7 @@
     flex-wrap: wrap;
     gap: 10px;
   }
-
-  .cabecera-seccion h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--morado-oscuro);
-  }
+  .cabecera-seccion h2 { margin: 0; font-size: 18px; color: var(--morado-oscuro); }
 
   .btn-volver-seccion {
     background: var(--lavanda-suave);
@@ -239,29 +198,16 @@
     font-size: 13px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-volver-seccion:hover {
-    background: var(--borde);
   }
 
   form {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px;
     align-items: end;
   }
-
-  label {
-    display: grid;
-    gap: 5px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--texto-gris);
-  }
-
+  label { display: grid; gap: 5px; font-size: 13px; font-weight: 500; color: var(--texto-gris); }
   input, select, textarea, button { font: inherit; }
-
   input, select, textarea {
     padding: 9px 12px;
     border: 1.5px solid var(--borde);
@@ -269,9 +215,7 @@
     background: #fff;
     color: var(--texto-oscuro);
     outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
   }
-
   input:focus, select:focus, textarea:focus {
     border-color: var(--morado-medio);
     box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
@@ -285,80 +229,119 @@
     color: #fff;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
   }
-
   button:hover { background: var(--morado-medio); }
-  button:active { transform: scale(0.98); }
-
-  button.sec {
-    background: var(--lavanda-suave);
-    color: var(--morado-oscuro);
-    font-weight: 500;
-  }
+  button.sec { background: var(--lavanda-suave); color: var(--morado-oscuro); font-weight: 500; }
   button.sec:hover { background: var(--borde); }
-
-  button.peligro {
-    background: #e11d48;
-    color: #fff;
-  }
+  button.peligro { background: #e11d48; color: #fff; }
   button.peligro:hover { background: #be123c; }
+  button.whatsapp { background: #22c55e; color: #fff; }
+  button.whatsapp:hover { background: #16a34a; }
+  button.mini { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
 
-  button.mini {
-    padding: 5px 10px;
-    font-size: 12px;
-    border-radius: 6px;
-  }
-
-  .barra {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: end;
-    margin-bottom: 14px;
-  }
-
+  .barra { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 14px; }
   .tabla { overflow-x: auto; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  th, td {
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--borde);
-    vertical-align: middle;
-  }
-
-  th {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    color: var(--morado-principal);
-    background: #faf5ff;
-    font-weight: 600;
-  }
-
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borde); vertical-align: middle; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--morado-principal); background: #faf5ff; font-weight: 600; }
   tbody tr:hover { background: #faf5ff; }
-
   .acciones { display: flex; flex-wrap: wrap; gap: 6px; }
 
-  .estado {
-    padding: 3px 9px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
+  .estado { padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
   .PROGRAMADO { background: #ede9fe; color: #5b21b6; }
   .CANCELADO  { background: #ffe4e6; color: #9f1239; }
   .REALIZADO  { background: #dcfce7; color: #166534; }
   .AUSENTE    { background: #fef3c7; color: #92400e; }
+
+  /* ========== CALENDARIO ========== */
+  .calendario-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .calendario-header h3 { margin: 0; font-size: 16px; color: var(--morado-oscuro); font-weight: 600; text-transform: capitalize; }
+  .calendario-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+  .dia-nombre { font-size: 12px; font-weight: 600; color: var(--morado-principal); padding: 6px 0; background: #faf5ff; border-radius: 6px; }
+  .dia-celda {
+    min-height: 52px; border: 1px solid var(--borde); border-radius: 8px; padding: 4px; font-size: 13px;
+    cursor: pointer; background: #fff; display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  }
+  .dia-celda:hover { border-color: var(--morado-medio); background: var(--lavanda-suave); }
+  .dia-celda.vacio { border-color: transparent; background: transparent; cursor: default; }
+  .dia-celda.hoy { border: 2px solid var(--morado-principal); font-weight: 700; }
+  .dia-celda.seleccionado { background: var(--lavanda-suave); border-color: var(--morado-medio); }
+  .badge-turnos {
+    background: linear-gradient(135deg, var(--morado-principal), var(--morado-medio));
+    color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; margin-top: 2px;
+  }
+
+  /* ========== ODONTOGRAMA DIGITAL ========== */
+  .odontograma-contenedor {
+    background: #faf5ff;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 14px;
+  }
+  .odontograma-herramientas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--borde);
+  }
+  .tool-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+  }
+  .tool-item.activo {
+    border-color: var(--morado-principal);
+    background: var(--lavanda-suave);
+    font-weight: 600;
+  }
+  .color-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+  .c-sano { background: #ffffff; border: 1px solid #a1a1aa; }
+  .c-caries { background: #ef4444; }
+  .c-obturacion { background: #3b82f6; }
+  .c-endodoncia { background: #22c55e; }
+  .c-extraccion { background: #71717a; }
+
+  .arco-dental {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding: 8px 0;
+  }
+  .diente-caja {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 44px;
+  }
+  .diente-num { font-size: 11px; font-weight: 700; color: var(--morado-oscuro); }
+  
+  /* SVG de cada pieza con 5 caras */
+  .diente-svg {
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+  }
+  .diente-cara {
+    stroke: #64748b;
+    stroke-width: 1.5;
+    fill: #ffffff;
+    transition: fill 0.15s ease;
+  }
+  .diente-cara:hover { fill: #f3e8ff; }
 
   #mensaje {
     position: sticky;
@@ -370,20 +353,11 @@
     display: none;
     text-align: center;
   }
-  #mensaje.ok { display: block; background: #dcfce7; color: #166534; border-bottom: 1px solid #bbf7d0; }
-  #mensaje.error { display: block; background: #ffe4e6; color: #9f1239; border-bottom: 1px solid #fecdd3; }
+  #mensaje.ok { display: block; background: #dcfce7; color: #166534; }
+  #mensaje.error { display: block; background: #ffe4e6; color: #9f1239; }
 
-  dialog {
-    border: 1px solid var(--borde);
-    border-radius: 14px;
-    padding: 24px;
-    min-width: 320px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-  }
-  dialog::backdrop {
-    background: rgba(46, 16, 101, 0.4);
-    backdrop-filter: blur(2px);
-  }
+  dialog { border: 1px solid var(--borde); border-radius: 14px; padding: 24px; min-width: 320px; }
+  dialog::backdrop { background: rgba(46, 16, 101, 0.4); backdrop-filter: blur(2px); }
   dialog form { grid-template-columns: 1fr; }
   .vacio { color: var(--texto-gris); padding: 16px 0; text-align: center; }
 </style>
@@ -406,11 +380,11 @@
   </div>
 </div>
 
-<!-- 2. PANEL DE GESTIÓN -->
+<!-- 2. PANEL PRINCIPAL DE GESTIÓN -->
 <div id="panel-gestion" style="display: none;">
   <header>
     <div>
-      <h1>Gestor de Turnos - Odontología</h1>
+      <h1>Gestor Odontológico</h1>
       <p>Od. Anaclara Cuzziol &bull; Panel de Gestión</p>
     </div>
     <button type="button" class="btn-volver-portada" id="btnVolverPortada">Inicio</button>
@@ -419,7 +393,23 @@
   <div id="mensaje" role="status"></div>
 
   <main>
-    <!-- Botones de Acceso a Módulos -->
+    <!-- Métricas del Dashboard Clínico -->
+    <div class="grid-metricas">
+      <div class="card-metrica">
+        <span class="titulo">Turnos de Hoy</span>
+        <span class="valor" id="metricaHoy">0</span>
+      </div>
+      <div class="card-metrica">
+        <span class="titulo">Pacientes Registrados</span>
+        <span class="valor" id="metricaPacientes">0</span>
+      </div>
+      <div class="card-metrica">
+        <span class="titulo">Recaudación Cobrada</span>
+        <span class="valor" id="metricaCobrado">$ 0</span>
+      </div>
+    </div>
+
+    <!-- Menú de Acciones Rápidas -->
     <div class="barra-modulos">
       <button type="button" class="btn-modulo" id="btnAbrirNuevoTurno">
         <span>+</span> Nuevo Turno
@@ -429,7 +419,7 @@
       </button>
     </div>
 
-    <!-- Módulo 1: Agenda de Turnos (Vista Principal) -->
+    <!-- Módulo 1: Agenda de Turnos y Calendario -->
     <section id="secAgenda">
       <div class="cabecera-seccion">
         <h2>Agenda de Turnos</h2>
@@ -449,9 +439,22 @@
           <tbody id="tablaTurnos"></tbody>
         </table>
       </div>
+
+      <!-- Calendario Mensual -->
+      <div style="margin-top: 32px; border-top: 2px solid var(--lavanda-suave); padding-top: 20px;">
+        <div class="calendario-header">
+          <h3 id="calTituloMes">Mes Año</h3>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="mini sec" id="btnMesAnt">&lt; Anterior</button>
+            <button type="button" class="mini sec" id="btnMesHoy">Hoy</button>
+            <button type="button" class="mini sec" id="btnMesSig">Siguiente &gt;</button>
+          </div>
+        </div>
+        <div class="calendario-grid" id="calDiasGrid"></div>
+      </div>
     </section>
 
-    <!-- Módulo 2: Nuevo Turno (Oculto por defecto) -->
+    <!-- Módulo 2: Nuevo Turno -->
     <section id="secNuevoTurno" style="display: none;">
       <div class="cabecera-seccion">
         <h2>Nuevo Turno</h2>
@@ -480,7 +483,7 @@
       </form>
     </section>
 
-    <!-- Módulo 3: Gestión de Pacientes (Oculto por defecto) -->
+    <!-- Módulo 3: Gestión de Pacientes -->
     <section id="secPacientes" style="display: none;">
       <div class="cabecera-seccion">
         <h2>Gestión de Pacientes</h2>
@@ -490,7 +493,7 @@
         <label>Nombre <input type="text" id="pNombre" required></label>
         <label>Apellido <input type="text" id="pApellido" required></label>
         <label>DNI <input type="text" id="pDni" required></label>
-        <label>Teléfono <input type="text" id="pTelefono"></label>
+        <label>Teléfono (WhatsApp) <input type="text" id="pTelefono" placeholder="Ej: 3624123456"></label>
         <label>Email <input type="email" id="pEmail"></label>
         <label>Obra social <input type="text" id="pObraSocial"></label>
         <div><button type="submit">Guardar paciente</button></div>
@@ -507,6 +510,51 @@
           </thead>
           <tbody id="tablaPacientes"></tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- Módulo 4: Ficha Clínica y Odontograma Digital del Paciente -->
+    <section id="secOdontograma" style="display: none;">
+      <div class="cabecera-seccion">
+        <div>
+          <h2>Ficha Clínica & Odontograma Digital</h2>
+          <p id="odoPacienteNombre" style="margin:4px 0 0; color:var(--morado-medio); font-weight:600; font-size:15px;"></p>
+        </div>
+        <button type="button" class="btn-volver-seccion" id="btnVolverDeOdontograma">← Volver</button>
+      </div>
+
+      <!-- Anamnesis / Datos Clínicos -->
+      <div style="background:#fff; border:1px solid var(--borde); border-radius:10px; padding:16px; margin-bottom:18px;">
+        <h4 style="margin:0 0 10px; color:var(--morado-oscuro);">Antecedentes & Notas Médicas</h4>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+          <label>Alergias / Contraindicaciones
+            <input type="text" id="odoAlergias" placeholder="Ej: Penicilina, látex, anestésicos con vaso...">
+          </label>
+          <label>Enfermedades de Base / Medicación
+            <input type="text" id="odoEnfermedades" placeholder="Ej: Hipertensión, diabetes, anticoagulantes...">
+          </label>
+        </div>
+        <div style="margin-top:12px; text-align:right;">
+          <button type="button" class="mini" id="btnGuardarFicha">Guardar Anamnesis</button>
+        </div>
+      </div>
+
+      <!-- Odontograma interactivo con las 32 piezas -->
+      <div class="odontograma-contenedor">
+        <div class="odontograma-herramientas">
+          <span style="font-size:13px; font-weight:600; color:var(--morado-oscuro);">Herramienta activa:</span>
+          <div class="tool-item activo" data-color="#ffffff" data-diag="SANO"><span class="color-dot c-sano"></span> Sano</div>
+          <div class="tool-item" data-color="#ef4444" data-diag="CARIES"><span class="color-dot c-caries"></span> Caries</div>
+          <div class="tool-item" data-color="#3b82f6" data-diag="OBTURACION"><span class="color-dot c-obturacion"></span> Arreglo / Obturación</div>
+          <div class="tool-item" data-color="#22c55e" data-diag="ENDODONCIA"><span class="color-dot c-endodoncia"></span> Endodoncia</div>
+          <div class="tool-item" data-color="#71717a" data-diag="EXTRAIDO"><span class="color-dot c-extraccion"></span> Ausente / Extracción</div>
+        </div>
+
+        <p style="margin: 0 0 8px; font-size:12px; font-weight:600; color:var(--texto-gris); text-align:center;">MAXILAR SUPERIOR (Piezas 18 a 28)</p>
+        <div class="arco-dental" id="arcoSuperior"></div>
+
+        <p style="margin: 16px 0 8px; font-size:12px; font-weight:600; color:var(--texto-gris); text-align:center;">MAXILAR INFERIOR (Piezas 48 a 38)</p>
+        <div class="arco-dental" id="arcoInferior"></div>
       </div>
     </section>
   </main>
@@ -531,36 +579,38 @@
 <script>
 const $ = (id) => document.getElementById(id);
 const dinero = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
-let turnosMostrados = [];
-let turnoAReprogramar = null;
 
-/* ---------- Control de Portada e Inicio ---------- */
+let turnosMostrados = [];
+let todosLosTurnos = [];
+let listaPacientes = [];
+let turnoAReprogramar = null;
+let fechaCalendario = new Date();
+
+// Estado del odontograma
+let pacienteActivoParaOdo = null;
+let herramientaActivaColor = "#ffffff";
+let herramientaActivaDiag = "SANO";
+
+/* ---------- Control de Portada ---------- */
 $("btnIniciarPortada").addEventListener("click", () => {
-  const portada = $("portada");
-  const panel = $("panel-gestion");
-  
-  portada.classList.add("oculta");
-  panel.style.display = "block";
-  setTimeout(() => {
-    panel.classList.add("activo");
-  }, 30);
+  $("portada").classList.add("oculta");
+  $("panel-gestion").style.display = "block";
+  setTimeout(() => { $("panel-gestion").classList.add("activo"); }, 30);
   mostrarModulo("secAgenda");
 });
 
 $("btnVolverPortada").addEventListener("click", () => {
-  const portada = $("portada");
-  const panel = $("panel-gestion");
-  
-  panel.classList.remove("activo");
-  panel.style.display = "none";
-  portada.classList.remove("oculta");
+  $("panel-gestion").classList.remove("activo");
+  $("panel-gestion").style.display = "none";
+  $("portada").classList.remove("oculta");
 });
 
-/* ---------- Navegación entre Módulos ---------- */
+/* ---------- Navegación de Módulos ---------- */
 function mostrarModulo(idModulo) {
   $("secAgenda").style.display = "none";
   $("secNuevoTurno").style.display = "none";
   $("secPacientes").style.display = "none";
+  $("secOdontograma").style.display = "none";
 
   $(idModulo).style.display = "block";
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -568,12 +618,13 @@ function mostrarModulo(idModulo) {
 
 $("btnAbrirNuevoTurno").addEventListener("click", () => mostrarModulo("secNuevoTurno"));
 $("btnAbrirPacientes").addEventListener("click", () => mostrarModulo("secPacientes"));
+$("btnVolverDeOdontograma").addEventListener("click", () => mostrarModulo("secPacientes"));
 
-document.querySelectorAll(".btn-volver-seccion").forEach((btn) => {
+document.querySelectorAll(".btn-volver-seccion[data-volver]").forEach((btn) => {
   btn.addEventListener("click", () => mostrarModulo("secAgenda"));
 });
 
-/* ---------- Utilidades Generales ---------- */
+/* ---------- Utilidades ---------- */
 function esc(texto) {
   return String(texto ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -620,41 +671,138 @@ function hoyTexto() {
   return d.getFullYear() + "-" + mes + "-" + dia;
 }
 
-/* ---------- Agenda de Turnos ---------- */
+/* ---------- WhatsApp Recordatorio ---------- */
+function abrirWhatsApp(telefono, pacienteNombre, fechaHoraStr) {
+  if (!telefono) {
+    aviso("El paciente no tiene número de teléfono registrado", "error");
+    return;
+  }
+  const limp = telefono.replace(/\D/g, "");
+  const num = limp.startsWith("54") ? limp : "549" + limp;
+  const fechaObj = new Date(fechaHoraStr);
+  const fecha = fechaObj.toLocaleDateString("es-AR");
+  const hora = fechaObj.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+
+  const texto = encodeURIComponent(`Hola ${pacienteNombre}, te recordamos tu turno odontológico con la Od. Anaclara Cuzziol para el ${fecha} a las ${hora} hs. Por favor confirmá tu asistencia.`);
+  window.open(`https://wa.me/${num}?text=${texto}`, "_blank");
+}
+
+/* ---------- Agenda & Métricas ---------- */
 async function cargarTurnos() {
   const fecha = $("filtroFecha").value;
-  turnosMostrados = await api("/turnos" + (fecha ? "?fecha=" + fecha : ""));
+  const [filtrados, todos, pacientes] = await Promise.all([
+    api("/turnos" + (fecha ? "?fecha=" + fecha : "")),
+    api("/turnos"),
+    api("/pacientes")
+  ]);
+
+  turnosMostrados = filtrados;
+  todosLosTurnos = todos;
+  listaPacientes = pacientes;
+
+  // Actualizar Métricas
+  const hoyStr = hoyTexto();
+  const turnosHoy = todos.filter(t => t.fechaHoraInicio && t.fechaHoraInicio.slice(0, 10) === hoyStr);
+  $("metricaHoy").textContent = turnosHoy.length;
+  $("metricaPacientes").textContent = pacientes.length;
+
+  const totalCobrado = todos.reduce((acc, t) => acc + (t.cobrado && t.importe ? Number(t.importe) : 0), 0);
+  $("metricaCobrado").textContent = dinero.format(totalCobrado);
+
   const cuerpo = $("tablaTurnos");
   if (turnosMostrados.length === 0) {
     cuerpo.innerHTML = '<tr><td colspan="7" class="vacio">No hay turnos para mostrar.</td></tr>';
-    return;
-  }
-  cuerpo.innerHTML = turnosMostrados.map((t) => {
-    const programado = t.estado === "PROGRAMADO";
-    const botones = [];
-    if (programado) {
-      botones.push(`<button class="mini sec" data-accion="reprogramar" data-id="${t.id}">Reprogramar</button>`);
-      botones.push(`<button class="mini sec" data-accion="realizado" data-id="${t.id}">Realizado</button>`);
-      botones.push(`<button class="mini sec" data-accion="ausente" data-id="${t.id}">Ausente</button>`);
-      botones.push(`<button class="mini sec" data-accion="cancelar" data-id="${t.id}">Cancelar</button>`);
-    }
-    if (t.estado !== "CANCELADO" && !t.cobrado) {
-      botones.push(`<button class="mini" data-accion="cobrar" data-id="${t.id}">Cobrar</button>`);
-    }
-    // Botón de eliminar turno
-    botones.push(`<button class="mini peligro" data-accion="eliminarTurno" data-id="${t.id}">Eliminar</button>`);
+  } else {
+    cuerpo.innerHTML = turnosMostrados.map((t) => {
+      const programado = t.estado === "PROGRAMADO";
+      const botones = [];
+      if (programado) {
+        botones.push(`<button class="mini sec" data-accion="reprogramar" data-id="${t.id}">Reprogramar</button>`);
+        botones.push(`<button class="mini sec" data-accion="realizado" data-id="${t.id}">Realizado</button>`);
+        botones.push(`<button class="mini sec" data-accion="ausente" data-id="${t.id}">Ausente</button>`);
+        botones.push(`<button class="mini sec" data-accion="cancelar" data-id="${t.id}">Cancelar</button>`);
+      }
+      if (t.estado !== "CANCELADO" && !t.cobrado) {
+        botones.push(`<button class="mini" data-accion="cobrar" data-id="${t.id}">Cobrar</button>`);
+      }
+      if (t.paciente && t.paciente.telefono) {
+        botones.push(`<button class="mini whatsapp" data-accion="whatsapp" data-tel="${esc(t.paciente.telefono)}" data-nom="${esc(t.paciente.nombre)}" data-fecha="${esc(t.fechaHoraInicio)}">WhatsApp</button>`);
+      }
+      botones.push(`<button class="mini peligro" data-accion="eliminarTurno" data-id="${t.id}">Eliminar</button>`);
 
-    return `<tr>
-      <td>${esc(formatoFecha(t.fechaHoraInicio))}</td>
-      <td><strong>${esc(t.paciente.apellido)}, ${esc(t.paciente.nombre)}</strong><br><small style="color:var(--texto-gris)">DNI ${esc(t.paciente.dni)}</small></td>
-      <td>${esc(t.tratamiento.nombre)}${t.observaciones ? "<br><small style='color:var(--texto-gris)'>" + esc(t.observaciones) + "</small>" : ""}</td>
-      <td>${t.importe != null ? dinero.format(t.importe) : "-"}</td>
-      <td>${t.cobrado ? "Sí" : "No"}</td>
-      <td><span class="estado ${esc(t.estado)}">${esc(t.estado.toLowerCase())}</span></td>
-      <td><div class="acciones">${botones.join("")}</div></td>
-    </tr>`;
-  }).join("");
+      return `<tr>
+        <td>${esc(formatoFecha(t.fechaHoraInicio))}</td>
+        <td><strong>${esc(t.paciente.apellido)}, ${esc(t.paciente.nombre)}</strong><br><small style="color:var(--texto-gris)">DNI ${esc(t.paciente.dni)}</small></td>
+        <td>${esc(t.tratamiento.nombre)}${t.observaciones ? "<br><small style='color:var(--texto-gris)'>" + esc(t.observaciones) + "</small>" : ""}</td>
+        <td>${t.importe != null ? dinero.format(t.importe) : "-"}</td>
+        <td>${t.cobrado ? "Sí" : "No"}</td>
+        <td><span class="estado ${esc(t.estado)}">${esc(t.estado.toLowerCase())}</span></td>
+        <td><div class="acciones">${botones.join("")}</div></td>
+      </tr>`;
+    }).join("");
+  }
+
+  renderizarCalendario();
 }
+
+function renderizarCalendario() {
+  const anio = fechaCalendario.getFullYear();
+  const mes = fechaCalendario.getMonth();
+  const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  $("calTituloMes").textContent = `${nombresMeses[mes]} ${anio}`;
+
+  const conteoTurnos = {};
+  todosLosTurnos.forEach((t) => {
+    if (t.fechaHoraInicio) {
+      const f = t.fechaHoraInicio.slice(0, 10);
+      conteoTurnos[f] = (conteoTurnos[f] || 0) + 1;
+    }
+  });
+
+  const primerDia = new Date(anio, mes, 1);
+  const ultimoDia = new Date(anio, mes + 1, 0);
+  let indiceDiaSemana = (primerDia.getDay() + 6) % 7;
+
+  const hoyStr = hoyTexto();
+  const filtroActual = $("filtroFecha").value;
+  const diasSemana = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  let html = diasSemana.map((d) => `<div class="dia-nombre">${d}</div>`).join("");
+
+  for (let i = 0; i < indiceDiaSemana; i++) html += `<div class="dia-celda vacio"></div>`;
+
+  for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+    const diaStr = String(dia).padStart(2, "0");
+    const mesStr = String(mes + 1).padStart(2, "0");
+    const fechaCompleta = `${anio}-${mesStr}-${diaStr}`;
+
+    const esHoy = fechaCompleta === hoyStr;
+    const esSeleccionado = fechaCompleta === filtroActual;
+    const cant = conteoTurnos[fechaCompleta] || 0;
+
+    let clases = "dia-celda";
+    if (esHoy) clases += " hoy";
+    if (esSeleccionado) clases += " seleccionado";
+
+    html += `<div class="${clases}" data-fecha="${fechaCompleta}">
+      <span>${dia}</span>
+      ${cant > 0 ? `<span class="badge-turnos">${cant} ${cant === 1 ? "turno" : "turnos"}</span>` : ""}
+    </div>`;
+  }
+
+  const grid = $("calDiasGrid");
+  grid.innerHTML = html;
+
+  grid.querySelectorAll(".dia-celda[data-fecha]").forEach((celda) => {
+    celda.addEventListener("click", () => {
+      $("filtroFecha").value = celda.dataset.fecha;
+      conAviso(cargarTurnos);
+    });
+  });
+}
+
+$("btnMesAnt").addEventListener("click", () => { fechaCalendario.setMonth(fechaCalendario.getMonth() - 1); renderizarCalendario(); });
+$("btnMesSig").addEventListener("click", () => { fechaCalendario.setMonth(fechaCalendario.getMonth() + 1); renderizarCalendario(); });
+$("btnMesHoy").addEventListener("click", () => { fechaCalendario = new Date(); $("filtroFecha").value = hoyTexto(); conAviso(cargarTurnos); });
 
 $("tablaTurnos").addEventListener("click", (ev) => {
   const boton = ev.target.closest("button[data-accion]");
@@ -662,15 +810,18 @@ $("tablaTurnos").addEventListener("click", (ev) => {
   const id = boton.dataset.id;
   const accion = boton.dataset.accion;
 
+  if (accion === "whatsapp") {
+    abrirWhatsApp(boton.dataset.tel, boton.dataset.nom, boton.dataset.fecha);
+    return;
+  }
   if (accion === "eliminarTurno") {
-    if (!confirm("¿Está seguro de eliminar este turno definitivamente?")) return;
+    if (!confirm("¿Está seguro de eliminar este turno?")) return;
     conAviso(async () => {
       await api("/turnos/" + id, { method: "DELETE" });
       await cargarTurnos();
     }, "Turno eliminado");
     return;
   }
-
   if (accion === "reprogramar") {
     turnoAReprogramar = turnosMostrados.find((t) => String(t.id) === id);
     $("repFecha").value = turnoAReprogramar.fechaHoraInicio.slice(0, 16);
@@ -709,14 +860,18 @@ $("formReprogramar").addEventListener("submit", (ev) => {
 });
 $("btnCerrarRep").addEventListener("click", () => $("dlgReprogramar").close());
 
-$("filtroFecha").addEventListener("change", () => conAviso(cargarTurnos));
-$("btnHoy").addEventListener("click", () => { $("filtroFecha").value = hoyTexto(); conAviso(cargarTurnos); });
+$("filtroFecha").addEventListener("change", () => {
+  if ($("filtroFecha").value) fechaCalendario = new Date($("filtroFecha").value + "T00:00:00");
+  conAviso(cargarTurnos);
+});
+$("btnHoy").addEventListener("click", () => { $("filtroFecha").value = hoyTexto(); fechaCalendario = new Date(); conAviso(cargarTurnos); });
 $("btnTodos").addEventListener("click", () => { $("filtroFecha").value = ""; conAviso(cargarTurnos); });
 
 /* ---------- Gestión de Pacientes ---------- */
 async function cargarPacientes() {
   const q = $("buscarPaciente").value.trim();
   const pacientes = await api("/pacientes" + (q ? "?buscar=" + encodeURIComponent(q) : ""));
+  listaPacientes = pacientes;
   const cuerpo = $("tablaPacientes");
   if (pacientes.length === 0) {
     cuerpo.innerHTML = '<tr><td colspan="6" class="vacio">No hay pacientes para mostrar.</td></tr>';
@@ -729,22 +884,30 @@ async function cargarPacientes() {
     <td>${esc(p.email)}</td>
     <td>${esc(p.obraSocial)}</td>
     <td>
-      <button class="mini peligro" data-accion="eliminarPaciente" data-id="${p.id}">Eliminar</button>
+      <div class="acciones">
+        <button class="mini sec" data-accion="verOdontograma" data-id="${p.id}">🦷 Odontograma</button>
+        <button class="mini peligro" data-accion="eliminarPaciente" data-id="${p.id}">Eliminar</button>
+      </div>
     </td>
   </tr>`).join("");
   return pacientes;
 }
 
 $("tablaPacientes").addEventListener("click", (ev) => {
-  const boton = ev.target.closest("button[data-accion='eliminarPaciente']");
+  const boton = ev.target.closest("button[data-accion]");
   if (!boton) return;
   const id = boton.dataset.id;
-  if (!confirm("¿Está seguro de eliminar este paciente?")) return;
+  const accion = boton.dataset.accion;
 
-  conAviso(async () => {
-    await api("/pacientes/" + id, { method: "DELETE" });
-    await Promise.all([cargarPacientes(), cargarSelectPacientes(), cargarTurnos()]);
-  }, "Paciente eliminado");
+  if (accion === "eliminarPaciente") {
+    if (!confirm("¿Está seguro de eliminar este paciente?")) return;
+    conAviso(async () => {
+      await api("/pacientes/" + id, { method: "DELETE" });
+      await Promise.all([cargarPacientes(), cargarSelectPacientes(), cargarTurnos()]);
+    }, "Paciente eliminado");
+  } else if (accion === "verOdontograma") {
+    abrirOdontogramaPaciente(id);
+  }
 });
 
 async function cargarSelectPacientes() {
@@ -770,7 +933,7 @@ $("formPaciente").addEventListener("submit", (ev) => {
       }),
     });
     $("formPaciente").reset();
-    await Promise.all([cargarPacientes(), cargarSelectPacientes()]);
+    await Promise.all([cargarPacientes(), cargarSelectPacientes(), cargarTurnos()]);
     mostrarModulo("secAgenda");
   }, "Paciente guardado con éxito");
 });
@@ -804,8 +967,160 @@ $("formTurno").addEventListener("submit", (ev) => {
   }, "Turno agendado con éxito");
 });
 
-/* ---------- Inicialización ---------- */
+/* ---------- Odontograma Interactivo SVG ---------- */
+function crearSvgDiente(pieza) {
+  return `
+    <div class="diente-caja" data-diente="${pieza}">
+      <span class="diente-num">${pieza}</span>
+      <svg class="diente-svg" viewBox="0 0 100 100" data-diente="${pieza}">
+        <!-- Cara Superior (Vestibular en superior / Lingual en inferior) -->
+        <polygon class="diente-cara" points="0,0 100,0 75,25 25,25" data-cara="V" />
+        <!-- Cara Derecha (Distal o Mesial según cuadrante) -->
+        <polygon class="diente-cara" points="100,0 100,100 75,75 75,25" data-cara="D" />
+        <!-- Cara Inferior (Palatino/Lingual o Vestibular) -->
+        <polygon class="diente-cara" points="100,100 0,100 25,75 75,75" data-cara="L" />
+        <!-- Cara Izquierda (Mesial o Distal) -->
+        <polygon class="diente-cara" points="0,100 0,0 25,25 25,75" data-cara="M" />
+        <!-- Cara Centro (Oclusal / Incisal) -->
+        <polygon class="diente-cara" points="25,25 75,25 75,75 25,75" data-cara="O" />
+      </svg>
+    </div>
+  `;
+}
+
+function inicializarOdontogramaBase() {
+  const sup = [18,17,16,15,14,13,12,11, 21,22,23,24,25,26,27,28];
+  const inf = [48,47,46,45,44,43,42,41, 31,32,33,34,35,36,37,38];
+
+  $("arcoSuperior").innerHTML = sup.map(crearSvgDiente).join("");
+  $("arcoInferior").innerHTML = inf.map(crearSvgDiente).join("");
+
+  // Evento para cambiar de herramienta de color
+  document.querySelectorAll(".tool-item").forEach(item => {
+    item.addEventListener("click", () => {
+      document.querySelectorAll(".tool-item").forEach(t => t.classList.remove("activo"));
+      item.classList.add("activo");
+      herramientaActivaColor = item.dataset.color;
+      herramientaActivaDiag = item.dataset.diag;
+    });
+  });
+
+  // Evento delegado para pintar las caras del diente
+  document.querySelector(".odontograma-contenedor").addEventListener("click", (ev) => {
+    const cara = ev.target.closest(".diente-cara");
+    if (!cara || !pacienteActivoParaOdo) return;
+
+    cara.style.fill = herramientaActivaColor;
+    guardarOdontogramaLocal(pacienteActivoParaOdo.id);
+  });
+}
+
+function abrirOdontogramaPaciente(pacienteId) {
+  pacienteActivoParaOdo = listaPacientes.find(p => String(p.id) === String(pacienteId));
+  if (!pacienteActivoParaOdo) return;
+
+  $("odoPacienteNombre").textContent = `${pacienteActivoParaOdo.apellido}, ${pacienteActivoParaOdo.nombre} (DNI ${pacienteActivoParaOdo.dni})`;
+
+  // Cargar anamnesis guardada localmente
+  const anamnesis = JSON.parse(localStorage.getItem("anamnesis_" + pacienteId) || "{}");
+  $("odoAlergias").value = anamnesis.alergias || "";
+  $("odoEnfermedades").value = anamnesis.enfermedades || "";
+
+  // Cargar colores del odontograma guardado
+  const odoGuardado = JSON.parse(localStorage.getItem("odontograma_" + pacienteId) || "{}");
+  document.querySelectorAll(".diente-svg").forEach(svg => {
+    const num = svg.dataset.diente;
+    svg.querySelectorAll(".diente-cara").forEach(cara => {
+      const c = cara.dataset.cara;
+      const key = `${num}_${c}`;
+      cara.style.fill = odoGuardado[key] || "#ffffff";
+    });
+  });
+
+  mostrarModulo("secOdontograma");
+}
+
+/* ---------- Integración con API de Ficha Dental & Odontograma ---------- */
+async function abrirOdontogramaPaciente(pacienteId) {
+  pacienteActivoParaOdo = listaPacientes.find(p => String(p.id) === String(pacienteId));
+  if (!pacienteActivoParaOdo) return;
+
+  $("odoPacienteNombre").textContent = `${pacienteActivoParaOdo.apellido}, ${pacienteActivoParaOdo.nombre} (DNI ${pacienteActivoParaOdo.dni})`;
+
+  // Reset visual de todas las caras a blanco antes de cargar
+  document.querySelectorAll(".diente-cara").forEach(cara => {
+    cara.style.fill = "#ffffff";
+  });
+
+  try {
+    const ficha = await api(`/pacientes/${pacienteId}/ficha`);
+    
+    $("odoAlergias").value = ficha.alergias || "";
+    $("odoEnfermedades").value = ficha.enfermedades || "";
+
+    const odoGuardado = ficha.odontogramaJson ? JSON.parse(ficha.odontogramaJson) : {};
+    
+    document.querySelectorAll(".diente-svg").forEach(svg => {
+      const num = svg.dataset.diente;
+      svg.querySelectorAll(".diente-cara").forEach(cara => {
+        const c = cara.dataset.cara;
+        const key = `${num}_${c}`;
+        cara.style.fill = odoGuardado[key] || "#ffffff";
+      });
+    });
+  } catch (e) {
+    aviso("Error al cargar la ficha clínica del paciente", "error");
+  }
+
+  mostrarModulo("secOdontograma");
+}
+
+function serializarOdontogramaActual() {
+  const odo = {};
+  document.querySelectorAll(".diente-svg").forEach(svg => {
+    const num = svg.dataset.diente;
+    svg.querySelectorAll(".diente-cara").forEach(cara => {
+      const c = cara.dataset.cara;
+      const fill = cara.style.fill;
+      if (fill && fill !== "rgb(255, 255, 255)" && fill !== "#ffffff") {
+        odo[`${num}_${c}`] = fill;
+      }
+    });
+  });
+  return JSON.stringify(odo);
+}
+
+async function persistirFichaCompleta() {
+  if (!pacienteActivoParaOdo) return;
+
+  const payload = {
+    alergias: $("odoAlergias").value.trim(),
+    enfermedades: $("odoEnfermedades").value.trim(),
+    odontogramaJson: serializarOdontogramaActual()
+  };
+
+  await conAviso(async () => {
+    await api(`/pacientes/${pacienteActivoParaOdo.id}/ficha`, {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    });
+  }, "Ficha clínica y odontograma guardados en base de datos");
+}
+
+// Pintar caras del odontograma y guardar automáticamente
+document.querySelector(".odontograma-contenedor").addEventListener("click", (ev) => {
+  const cara = ev.target.closest(".diente-cara");
+  if (!cara || !pacienteActivoParaOdo) return;
+
+  cara.style.fill = herramientaActivaColor;
+  persistirFichaCompleta();
+});
+
+$("btnGuardarFicha").addEventListener("click", persistirFichaCompleta);
+
+/* ---------- Inicialización General ---------- */
 conAviso(async () => {
+  inicializarOdontogramaBase();
   await Promise.all([cargarTurnos(), cargarPacientes(), cargarSelectPacientes(), cargarTratamientos()]);
 });
 </script>
